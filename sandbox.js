@@ -17,10 +17,10 @@ const calendar = google.calendar({
 });
 
 const eventStartTime = new Date();
-eventStartTime.setDate(eventStartTime.getDay() + 2);
+eventStartTime.setDate(eventStartTime.getDay() + 7);
 
 const eventEndTime = new Date();
-eventEndTime.setDate(eventEndTime.getDay() + 2);
+eventEndTime.setDate(eventEndTime.getDay() + 8);
 eventEndTime.setMinutes(eventEndTime.getMinutes() + 45);
 
 const event = {
@@ -29,11 +29,11 @@ const event = {
   description: 'Playing dota with party "OTW TO TI"',
   start: {
     dateTime: eventStartTime,
-    timeZone: "UTC+7",
+    timeZone: "Asia/Jakarta",
   },
   end: {
     dateTime: eventEndTime,
-    timeZone: "UTC+7",
+    timeZone: "Asia/Jakarta",
   },
   colorId: 1,
 };

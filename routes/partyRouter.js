@@ -7,6 +7,7 @@ partyRouter.post("/", PartyController.createParty);
 partyRouter.get("/leadparties", PartyController.fetchLeadParties);
 partyRouter.get("/memberparties", PartyController.fetchMemberParties);
 partyRouter.get("/pendingparties", PartyController.fetchPendingParties);
+partyRouter.get("/partymembers/:partyId", PartyController.fetchPartyParties);
 partyRouter.get("/pendingmembers/:partyId", PartyController.fetchPendingMembers);
 partyRouter.post("/:id", PartyController.createPartiesUser);
 

@@ -167,6 +167,26 @@ class PartyController {
       next(error);
     }
   }
+  static async fetchPartyParties(req, res, next) {
+    try {
+      const PartyId = req.params.partyId
+      const foundMembers = await PartiesUser.findAll({
+        where: {
+          status: "approved",
+          PartyId
+        },
+        include: {
+          model: User,
+          as: "Users",
+          attributes: ["id", "name", "rank"]
+        }
+      })
+      const resp = foundMembers.map(el => el.Users)
+      res.status(200).json(resp)
+    } catch (error) {
+      next(error)
+    }
+  }
 }
 
 module.exports = PartyController;
