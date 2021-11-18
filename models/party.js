@@ -9,7 +9,6 @@ module.exports = (sequelize, DataTypes) => {
         as: "members",
       });
       Party.belongsTo(models.User, {
-        foreignKey: "partyLeaderId",
         as: "partyLeader",
       });
     }

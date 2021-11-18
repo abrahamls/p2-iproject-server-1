@@ -17,9 +17,9 @@ module.exports = (sequelize, DataTypes) => {
       User.hasMany(models.UsersHero, { as: "heroes" });
       User.hasMany(models.Party, {
         foreignKey: "partyLeaderId",
-        as: "madeParies",
+        as: "madeParties",
       });
-      User.belongsToMany(models.Role, { through: "UsersRole", as: "roles" });
+      User.belongsToMany(models.Role, { through: models.UsersRole, as: "roles" });
     }
   }
   User.init(

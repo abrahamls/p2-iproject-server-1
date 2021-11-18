@@ -1,4 +1,5 @@
 const { Party, User, PartiesUser, UsersHero } = require("../models");
+const partiesuser = require("../models/partiesuser");
 
 class PartyController {
   static async fetchParties(req, res, next) {
@@ -70,6 +71,26 @@ class PartyController {
       });
       res.status(201).json(newPartyMember);
     } catch (error) {
+      next(error);
+    }
+  }
+  static async fetchMyParties(req, res, next) {
+    try {
+      const foundParties = await User.findByPk(req.currentUser.id, {
+        attributes: {
+          exclude: ["createdAt", "updatedAt"],
+        },
+        include: {
+          model: Party,
+          as: "parties",
+          attributes: {
+            exclude: ["createdAt", "updatedAt"],
+          },
+        },
+      });
+      res.status(200).json(foundParties);
+    } catch (error) {
+      console.log(error);
       next(error);
     }
   }
