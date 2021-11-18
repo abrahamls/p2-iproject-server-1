@@ -40,7 +40,6 @@ class PlayerController {
   }
   static async updateStatus(req, res, next) {
     try {
-      console.log(req.params);
       const { UserId, PartyId } = req.query;
       await PartiesUser.update(
         {
