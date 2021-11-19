@@ -47,6 +47,12 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.DATE,
         allowNull: false,
         validate: {
+          notNull: {
+            msg: "Schedule is required",
+          },
+          notEmpty: {
+            msg: "Schedule is required",
+          },
           isDate: {
             msg: "Invalid date format!",
           },

@@ -1,18 +1,23 @@
-const { Party, User, PartiesUser, UsersHero } = require("../models");
-const partiesuser = require("../models/partiesuser");
+const { Party, User, PartiesUser, Role } = require("../models");
 
 class PartyController {
   static async fetchParties(req, res, next) {
     try {
       const foundParties = await Party.findAll({
+        where: {
+          "$members.PartiesUser.status$": "approved",
+        },
+        attributes: {
+          exclude: ["createdAt", "updatedAt"],
+        },
         include: {
           model: User,
           as: "members",
           attributes: ["id", "name", "rank"],
           include: {
-            model: UsersHero,
-            as: "heroes",
-            attributes: ["name"],
+            model: Role,
+            as: "roles",
+            attributes: ["title"],
           },
         },
       });
@@ -44,6 +49,10 @@ class PartyController {
     try {
       const PartyId = +req.params.id;
       const UserId = req.currentUser.id;
+      const foundParty = await Party.findByPk(PartyId)
+      if (!foundParty) {
+        throw { name: "notFound", message: "Party not found" }
+      }
       const oldRequest = await PartiesUser.findOne({
         where: {
           PartyId,
@@ -92,6 +101,94 @@ class PartyController {
     } catch (error) {
       console.log(error);
       next(error);
+    }
+  }
+  static async fetchLeadParties(req, res, next) {
+    try {
+      const foundLeadParty = await Party.findAll({
+        where: {
+          partyLeaderId: req.currentUser.id,
+        },
+        attributes: {
+          exclude: ["createdAt", "updatedAt"],
+        },
+      });
+      res.status(200).json(foundLeadParty);
+    } catch (error) {
+      next(error);
+    }
+  }
+  static async fetchMemberParties(req, res, next) {
+    try {
+      const foundMemberParties = await PartiesUser.findAll({
+        where: {
+          UserId: req.currentUser.id,
+          status: "approved",
+        },
+        include: {
+          model: Party,
+          as: "MemberParties",
+        },
+      });
+      res.status(200).json(foundMemberParties);
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  }
+  static async fetchPendingParties(req, res, next) {
+    try {
+      const pendingParties = await PartiesUser.findAll({
+        where: {
+          UserId: req.currentUser.id,
+          status: "pending",
+        },
+      });
+      res.status(200).json(pendingParties);
+    } catch (error) {
+      next(error);
+    }
+  }
+  static async fetchPendingMembers(req, res, next) {
+    try {
+      const PartyId = +req.params.partyId;
+      const foundMember = await PartiesUser.findAll({
+        where: {
+          PartyId,
+          status: "pending",
+        },
+        attributes: {
+          exclude: ["createdAt", "updatedAt"],
+        },
+        include: {
+          model: User,
+          as: "Users",
+          attributes: ["name"],
+        },
+      });
+      res.status(200).json(foundMember);
+    } catch (error) {
+      next(error);
+    }
+  }
+  static async fetchPartyParties(req, res, next) {
+    try {
+      const PartyId = req.params.partyId
+      const foundMembers = await PartiesUser.findAll({
+        where: {
+          status: "approved",
+          PartyId
+        },
+        include: {
+          model: User,
+          as: "Users",
+          attributes: ["id", "name", "rank"]
+        }
+      })
+      const resp = foundMembers.map(el => el.Users)
+      res.status(200).json(resp)
+    } catch (error) {
+      next(error)
     }
   }
 }

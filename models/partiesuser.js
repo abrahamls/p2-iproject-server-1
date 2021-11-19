@@ -1,7 +1,5 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
+"use strict";
+const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class PartiesUser extends Model {
     /**
@@ -11,33 +9,42 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      PartiesUser.belongsTo(models.User)
-      PartiesUser.belongsTo(models.Party)
+      PartiesUser.belongsTo(models.User, { as: "Users", foreignKey: "UserId" });
+      PartiesUser.belongsTo(models.Party, { as: "MemberParties", foreignKey: "PartyId" });
     }
-  };
-  PartiesUser.init({
-    PartyId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      validate: {
-        notNull: true,
-      }
+  }
+  PartiesUser.init(
+    {
+      id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+        allowNull: false,
+      },
+      PartyId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        validate: {
+          notNull: true,
+        },
+      },
+      UserId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        validate: {
+          notNull: true,
+        },
+      },
+      status: {
+        allowNull: false,
+        type: DataTypes.STRING,
+        defaultValue: "pending",
+      },
     },
-    UserId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      validate: {
-        notNull: true,
-      }
-    },
-    status: {
-      allowNull: false,
-      type: DataTypes.STRING,
-      defaultValue: "pending"
+    {
+      sequelize,
+      modelName: "PartiesUser",
     }
-  }, {
-    sequelize,
-    modelName: 'PartiesUser',
-  });
+  );
   return PartiesUser;
 };
