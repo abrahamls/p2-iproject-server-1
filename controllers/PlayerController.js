@@ -1,9 +1,16 @@
-const { User, PartiesUser, UsersRole } = require("../models");
+const { User, PartiesUser, UsersRole, Role } = require("../models");
 
 class PlayerController {
   static async addRole(req, res, next) {
     try {
       const { RoleId } = req.body;
+      const role = await Role.findByPk(RoleId);
+      if (!RoleId) {
+        throw { name: "badRequest", message: "Role Is is required!" };
+      }
+      if (!role) {
+        throw { name: "notFound", message: "Role Not Found" };
+      }
       const foundRole = await UsersRole.findOne({
         where: {
           UserId: req.currentUser.id,
@@ -25,6 +32,9 @@ class PlayerController {
   static async updateRank(req, res, next) {
     try {
       const { rank } = req.body;
+      if (!rank) {
+        throw { name: "badRequest", message: "Rank is required!" };
+      }
       await User.update(
         { rank },
         {
@@ -51,8 +61,8 @@ class PlayerController {
             PartyId,
           },
         }
-      )
-      res.status(200).json({ message: "status has been updated" })
+      );
+      res.status(200).json({ message: "status has been updated" });
     } catch (error) {
       next(error);
     }

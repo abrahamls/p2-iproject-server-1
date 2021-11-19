@@ -49,6 +49,10 @@ class PartyController {
     try {
       const PartyId = +req.params.id;
       const UserId = req.currentUser.id;
+      const foundParty = await Party.findByPk(PartyId)
+      if (!foundParty) {
+        throw { name: "notFound", message: "Party not found" }
+      }
       const oldRequest = await PartiesUser.findOne({
         where: {
           PartyId,
